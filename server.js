@@ -7,11 +7,17 @@ dotenv.config();
 const { Pool } = pkg;
 
 const app = express();
-app.use(cors());
+
+// Libera o CORS apenas para o seu frontend no Railway
+app.use(cors({
+  origin: "https://app-frontend-production-c95b.up.railway.app"
+}));
+
 app.use(express.json());
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // importante no Railway/PostgreSQL
 });
 
 // Rota de teste: inserir viagem
@@ -30,3 +36,4 @@ app.post("/viagem", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Backend rodando na porta ${PORT}`));
+
